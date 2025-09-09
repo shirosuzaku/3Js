@@ -1,0 +1,32 @@
+/* *{
+    padding: 0;
+    margin: 0;
+  }
+  #bg{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -40;
+    pointer-events: all;
+  }
+  
+  section{
+    pointer-events: none;
+    height: 100vh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+  .detailBox{
+    background-color: rgb(236, 236, 236);
+    padding: 5px 20px;
+    display: flex;
+    gap: 10px;
+    border: 1px solid black;
+    border-radius: 20px;
+  }
+  body{
+    position: relative;
+    pointer-events: none;
+    overflow: hidden;
+  }
+   */
