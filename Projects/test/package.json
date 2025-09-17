@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "@dimforge/rapier2d-compat": "^0.19.0",
+    "three": "^0.180.0"
+  },
+  "name": "test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "devDependencies": {
+    "vite": "^7.1.5"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite"
+  },
+  "author": "",
+  "license": "ISC"
+}

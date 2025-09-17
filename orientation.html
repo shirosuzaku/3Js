@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hybrid Sensor Demo</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #111; color: #eee; text-align: center; padding: 20px; }
+    button { padding: 10px 20px; font-size: 16px; margin-top: 20px; cursor: pointer; border: none; border-radius: 8px; background: #4CAF50; color: white; }
+    pre { text-align: left; background: #222; padding: 15px; border-radius: 8px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h1>📱 Hybrid Sensor API</h1>
+  <button id="startBtn">Enable Sensors</button>
+  <pre id="output">Press the button to start...</pre>
+
+  <script>
+    const output = document.getElementById("output");
+    const startBtn = document.getElementById("startBtn");
+
+    function logData(title, data) {
+      output.textContent = title + "\n\n" + data;
+    }
+
+    function startSensors() {
+      if ('AbsoluteOrientationSensor' in window && 'Accelerometer' in window && 'Gyroscope' in window) {
+        // ✅ Use modern Generic Sensor API
+        try {
+          let orientationSensor = new AbsoluteOrientationSensor({ frequency: 60 });
+          orientationSensor.addEventListener("reading", () => {
+            let q = orientationSensor.quaternion;
+            logData("Generic Sensor API", 
+              `Orientation Quaternion:
+  x: ${q[0].toFixed(3)}
+  y: ${q[1].toFixed(3)}
+  z: ${q[2].toFixed(3)}
+  w: ${q[3].toFixed(3)}`);
+          });
+          orientationSensor.start();
+        } catch (err) {
+          logData("Error", err.message);
+        }
+      } else {
+        // ⚠️ Fallback: use deprecated DeviceOrientation API
+        if (typeof DeviceOrientationEvent !== "undefined" &&
+            typeof DeviceOrientationEvent.requestPermission === "function") {
+          DeviceOrientationEvent.requestPermission().then(state => {
+            if (state === "granted") enableLegacy();
+            else alert("Permission denied.");
+          });
+        } else {
+          enableLegacy();
+        }
+      }
+    }
+
+    function enableLegacy() {
+      window.addEventListener("deviceorientation", (event) => {
+        logData("Legacy DeviceOrientation API",
+          `Alpha (Z): ${event.alpha?.toFixed(2)}°
+Beta  (X tilt): ${event.beta?.toFixed(2)}°
+Gamma (Y tilt): ${event.gamma?.toFixed(2)}°`);
+      });
+    }
+
+    startBtn.addEventListener("click", startSensors);
+  </script>
+</body>
+</html>

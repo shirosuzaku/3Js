@@ -7,7 +7,7 @@ export function ball(){
     // const ballmesh = new THREE.Mesh(ballgeo,ballmat)
 
     const boxMesh = new THREE.Mesh(
-        new THREE.BoxGeometry(1, 1, 0.2),
+        new THREE.BoxGeometry(1, 1, 1),
         new THREE.MeshBasicMaterial({ color: 0xff0000 })
     );
 
