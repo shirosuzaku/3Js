@@ -15,6 +15,7 @@ import { Testing } from './objects/testing';
 import { Resize } from './objects/Resize';
 import { Glass } from './objects/glass';
 import { GlassFont } from './objects/GlassFont';
+import { Board } from './objects/board';
 
 const doubleLarp = (OldMin, OldMax, NewMin, NewMax, OldValue) => {
   let OldRange = (OldMax - OldMin)
@@ -128,32 +129,33 @@ composer.addPass(gammaCorrectionPass)
 // Animation loop
 
 // Text behind bubble
-const loader = new THREE.FontLoader();
-loader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", (font) => {
-  const textGeo = new THREE.TextGeometry("The big quick brown fox jumped over the lazy dog", {
-    font: font,
-    size: 0.5,
-    height: 0.1,
-  });
-  textGeo.computeBoundingBox();
+// const loader = new THREE.FontLoader();
+// loader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", (font) => {
+//   const textGeo = new THREE.TextGeometry("The big quick brown fox jumped over the lazy dog", {
+//     font: font,
+//     size: 0.5,
+//     height: 0.1,
+//   });
+//   textGeo.computeBoundingBox();
 
-const box = textGeo.boundingBox;
-const xOffset = -0.5 * (box.max.x - box.min.x);
-const yOffset = -0.5 * (box.max.y - box.min.y);
-const zOffset = -0.5 * (box.max.z - box.min.z);
+// const box = textGeo.boundingBox;
+// const xOffset = -0.5 * (box.max.x - box.min.x);
+// const yOffset = -0.5 * (box.max.y - box.min.y);
+// const zOffset = -0.5 * (box.max.z - box.min.z);
 
-// Center the geometry itself
-textGeo.translate(xOffset, yOffset, zOffset);
-  const textMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
-  const textMesh = new THREE.Mesh(textGeo, textMat);
-  textMesh.position.set(-0.75, 0, 2);
-  mainScene.add(textMesh);
-});
+// // Center the geometry itself
+// textGeo.translate(xOffset, yOffset, zOffset);
+//   const textMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+//   const textMesh = new THREE.Mesh(textGeo, textMat);
+//   textMesh.position.set(-0.75, 0, 2);
+//   mainScene.add(textMesh);
+// });
 
-// let g = Glass()
-let glassFont = GlassFont()
+let g = Glass()
+// let glassFont = GlassFont(mainScene)
 
-mainScene.add(glassFont.mesh)
+mainScene.add(Board(),g.mesh)
+
 
 // g.cc.position.copy(g.mesh.position)
 
@@ -164,7 +166,11 @@ function Animate() {
 
   mainControls.update()
   
-  // g.cc.update(renderer,mainScene)
+  g.mesh.visible = false
+  g.cc.position.copy(mainCamera.position)
+  g.cc.update(renderer,mainScene)
+  g.mesh.visible = true
+  // glassFont.camera.update(renderer,mainScene)
 
   composer.render()
 }
@@ -189,3 +195,4 @@ const settings = {
 // On Resize 
 window.addEventListener('resize',Resize(mainCamera,renderer))
 Resize(mainCamera,renderer)
+console.clear()

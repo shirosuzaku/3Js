@@ -1,0 +1,277 @@
+*{
+    padding: 0;
+    margin: 0;
+  }
+  #bg{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -40;
+    pointer-events: all;
+  }
+  
+  section{
+    pointer-events: none;
+    height: 100vh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+  .detailBox{
+    background-color: rgb(236, 236, 236);
+    padding: 5px 20px;
+    display: flex;
+    gap: 10px;
+    border: 1px solid black;
+    border-radius: 20px;
+  }
+  body{
+    position: relative;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  
+  .ui{
+    pointer-events: none;
+  }
+  .container{
+    font-size: 1em;
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    pointer-events: none;
+  }
+  .container * {
+    pointer-events: all;
+    color: #fbfbff;
+  }
+  
+  .blurBg{
+    background: rgba(228, 224, 245, 0.2);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); 
+    color: rgb(0, 0, 0);
+  }
+  
+  .container button:hover{
+    cursor: pointer;
+  }
+  #holderPaste{
+    color: #15151c;
+  }
+  #btnCenter{
+    border: none;
+    background-color: transparent;
+    font-size: 30px;
+    position: absolute;
+    top: 1em;
+    left: 1em;
+  }
+  #btnCenter img{
+    width: 50px;
+    height: 50px;
+  }
+  
+  .counter{
+    position: absolute;
+    top: 0;
+    right: 1em;
+    padding: 1em;
+    border-radius: 5px;
+    display: flex;
+    margin: 1em 0;
+    gap: 1em;
+    background-color: #15151c3a;
+    backdrop-filter: blur(10px);
+  }
+  
+  .searchbar{
+    position: absolute;
+    top: 2em;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    padding: 0em 1em;
+    width: fit-content;
+    border-radius: 0.5em;
+    box-shadow:  0 8px 32px rgba(0, 0, 0, 0.2);
+  }
+  .holderBar{
+    display: flex;
+    gap: 1em;
+  }
+  .searchbar input:focus{
+    outline: none;
+  }
+  .searchbar input{
+    padding: 0.5em 0;
+    border: none;
+    background-color: transparent;
+  }
+  .searchbar button{
+    border: none;
+    background-color: transparent;
+  }
+  
+  
+  
+  .dropdown {
+    position: absolute;
+    border: 1px solid #ccc;
+    max-height: 150px;
+    overflow-y: auto;
+    background: white;
+    display: none;
+  }
+  .dropdown-item {
+    padding: 8px;
+    cursor: pointer;
+  }
+  .dropdown-item:hover {
+    background-color: #f0f0f0;
+  }
+  
+  
+  .result{
+    margin-top: 1em;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding-top: 10px;
+    border-radius: 0 15px 0 0 ;
+    background-color: #15151c3a;
+    backdrop-filter: blur(10px);
+  }
+  fieldset {
+    border: none;
+    padding: 1em;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  .result fieldset legend {
+    font-weight: bold;
+    padding: 0 0em;
+  }
+  
+  .logs:hover{
+    bottom: 0;
+  }
+  .logs{
+    transition: bottom 300ms ease-in-out;
+    position: absolute;
+    bottom: -168px;
+    right: 0;
+    border-radius: 5px 0 0 0 ;
+    background-color: white;
+    color: black;
+    padding: 18px;
+  }
+  .logs .list *{
+    color: black;
+  }
+  .logs .list .logItem{
+    height: 25px;
+  }
+  
+  
+  
+  
+  
+  .twoD * {
+    pointer-events: all;
+  }
+  
+  .pin.active{
+    opacity: 1;
+    margin-top: 0px;
+  }
+  .pin{
+    transition: opacity 300ms ease-out , margin-top 300ms ease-out ;
+    opacity: 0;
+    margin-top: 50px;
+    background-color: white;
+    padding: 10px;
+    padding-right: 0;
+    border-radius: 5px;
+    box-shadow:  0 8px 32px rgba(0, 0, 0, 0.2);
+    display: flex;
+  }
+  
+  .pin button:hover{cursor: pointer;}
+  .pin button{
+    border: none;
+    background-color: transparent;
+    text-decoration: underline;
+    font-size: 1em;
+  }
+  .pin button:nth-child(2){
+    background-color: red;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px 0 0 5px;
+    margin-left: 1em;
+  }
+  
+  /* ------------------------------------------- */
+  
+  .loaderBg.off{
+    opacity: 0;
+  }
+  .loaderBg{
+    opacity: 1;
+    pointer-events: none;
+    transition: opacity 300ms ;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: #15151c;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .three{
+    display: flex;
+    align-items: center;
+  }
+  
+  .description{
+    color: #fbfbff;
+  }
+  
+  @keyframes animatedBackground {
+    from {
+      background-position: 0 0;
+    }
+    to {
+      background-position: 100% 0;
+    }
+  }
+  .loaderBar.left{
+    border-radius:  15px 0 0  15px ;
+    border: 2.5px solid #fbfbff;
+    border-right: none;
+  }
+  .logo img{
+    width: 250px;
+  }
+  .loaderBar.right{
+    border-radius: 0 15px 15px 0;
+    border: 2.5px solid #fbfbff;
+    border-left: none;
+  }
+  .loaderBar{
+    width: 200px;
+    height: 30px;
+    background-image: url(./models/loader.svg);
+    background-color: orange;
+    background-position: 0px 0px;
+    background-repeat: repeat-x;
+    animation: animatedBackground 10s linear infinite alternate;
+  }
+  
+  .updatebar *{
+    color: black;
+  }

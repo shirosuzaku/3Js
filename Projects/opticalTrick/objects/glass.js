@@ -11,7 +11,7 @@ export function Glass() {
     // const bg = new THREE.BoxGeometry(2, 2, 2);
     const bm = new THREE.MeshPhysicalMaterial({
         envMap: cubeRenderTarget.texture,
-        color: 0xffffff,
+        // color: 0xffffff,
         envMapIntensity: 1,
         transmission: 1,
         thickness: 0.5,       // Refraction depth
@@ -19,11 +19,12 @@ export function Glass() {
         metalness: 1,
         clearcoat: 1,
         clearcoatRoughness: 0,
-        ior: 1.33             // Index of refraction (like real water)
+        ior: -1.33             // Index of refraction (like real water)
     });
     bm.envMap.mapping = THREE.CubeRefractionMapping;
     const bme = new THREE.Mesh(bg, bm);
     bme.position.set(0, 0, 4);
+    cubeCamera.position.set(0,0,4)
 
     // GUI controls
     const matFolder = gui.addFolder("Bubble Material");
@@ -33,7 +34,7 @@ export function Glass() {
     matFolder.add(bm, "metalness", 0, 1, 0.01);
     matFolder.add(bm, "clearcoat", 0, 1, 0.01);
     matFolder.add(bm, "clearcoatRoughness", 0, 1, 0.01);
-    matFolder.add(bm, "ior", 1, 2.5, 0.01).name("Index of Refraction");
+    matFolder.add(bm, "ior", -1, 2.5, 0.01).name("Index of Refraction");
     matFolder.add(bm, "envMapIntensity", 0, 3, 0.01);
     matFolder.open();
 
