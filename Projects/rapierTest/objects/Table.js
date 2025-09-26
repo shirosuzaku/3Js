@@ -17,6 +17,11 @@ export function Table(world,possition,dimensions,margin) {
     )
 
     world.createCollider(
+        RAPIER.ColliderDesc.cuboid(dim.x * 0.5, 1 ,dim.z * 0.5)
+        .setTranslation(0,2.5,0),
+        objectRB
+    )
+    world.createCollider(
         RAPIER.ColliderDesc.cuboid((dim.x - mar * 2) * 0.5,(dim.y - mar) * 0.5,(dim.z - mar * 2) * 0.5),
         objectRB
     )
