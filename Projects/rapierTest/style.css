@@ -23,10 +23,44 @@ body{
 .htmltimeline *{
   pointer-events: all;
 }
-section{
-  height: 100vh;
-  width: 300px;
-  background-color: rgba(240, 248, 255, 0.103);
-  /* scroll-snap-align: start;
-  scroll-snap-stop: always; */
+
+.moblelog{
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 26px;
+}
+
+.trackpad{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 50%;
+  /* background-color: rgb(91, 206, 129); */
+  pointer-events: all;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.border.inactive{
+  animation: blink 600ms infinite alternate;
+}
+.border{
+  width: 95%;
+  height: 95%;
+  outline: 5px solid rgba(255, 166, 0, 0.1);
+  border-radius: 20px;
+  /* background-color: rgb(173, 91, 206); */
+}
+
+@keyframes blink {
+  0%{
+    .border{
+      outline: 5px solid rgba(255, 166, 0, 0);
+    }
+  }
+  100%{
+    outline: 5px solid orange;
+  }
 }

@@ -8,7 +8,7 @@ export function createBox(world,dim,initialPos) {
     let pos = initialPos ||new THREE.Vector3(0,6,0)
     
   const objectRB = world.createRigidBody(
-    RAPIER.RigidBodyDesc.fixed().setTranslation(pos.x,pos.y,pos.z)
+    RAPIER.RigidBodyDesc.dynamic().setTranslation(pos.x,pos.y,pos.z)
   );
 
   // 2. Add collider (big flat box)
