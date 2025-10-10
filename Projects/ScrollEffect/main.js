@@ -13,6 +13,8 @@ import { Setup } from './objects/setup';
 import { Vector3 } from 'three';
 import { Testing } from './objects/testing';
 import { Resize } from './objects/Resize';
+import { LightTest } from './objects/lightTest';
+import { ScrollWall } from './objects/ScrollWall';
 import { TextureTest } from './objects/TextureTest';
 
 const doubleLarp = (OldMin, OldMax, NewMin, NewMax, OldValue) => {
@@ -30,22 +32,31 @@ const mainCanvas = document.getElementById('bg')
 // --- main setup
 const mainScene = new THREE.Scene()
 // 0xe15151c
-let campos = new Vector3(-10, 13.5, 8.5)
+let campos = new Vector3(0, 0, 10)
 let tarpos = new Vector3(0,0,0)
 let {renderer,mainCamera,mainControls} = Setup(mainCanvas,0x555555,campos,tarpos)//reder canvas ,bg color, camera position,control target
+
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
 
 const composer = new EffectComposer(renderer)
 const renderPass = new RenderPass(mainScene, mainCamera)
 composer.addPass(renderPass)
-const gammaCorrectionPass = new ShaderPass(GammaCorrectionShader)
-composer.addPass(gammaCorrectionPass)
+// const gammaCorrectionPass = new ShaderPass(GammaCorrectionShader)
+// composer.addPass(gammaCorrectionPass)
+
 
 // create blobs
-mainScene.add(Box());
-// TextureTest(mainScene)
+// mainScene.add(Box());
 
 // Helpers
-Testing(mainScene)
+// Testing(mainScene)
+
+// LightTest(mainScene)
+// ScrollWall(mainScene)
+// TextureTest(mainScene)
+
 
 // Animation loop
 function Animate() {
@@ -59,7 +70,6 @@ Animate()
 
 // animation
 
-
 // On Resize 
-window.addEventListener('resize',Resize(mainCamera,renderer))
+window.addEventListener('resize', () => Resize(mainCamera, renderer))
 Resize(mainCamera,renderer)

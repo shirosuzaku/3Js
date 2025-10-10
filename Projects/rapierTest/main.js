@@ -48,10 +48,10 @@ let tarpos = new Vector3(-7, 0, 0)
 let { renderer, mainCamera, mainControls } = Setup(mainCanvas, 0x555555, campos, tarpos)//reder canvas ,bg color, camera position,control target
 
 const composer = new EffectComposer(renderer)
-const gammaCorrectionPass = new ShaderPass(GammaCorrectionShader)
-composer.addPass(gammaCorrectionPass)
 const renderPass = new RenderPass(mainScene, mainCamera)
 composer.addPass(renderPass)
+const gammaCorrectionPass = new ShaderPass(GammaCorrectionShader)
+composer.addPass(gammaCorrectionPass)
 
 // create blobs
 

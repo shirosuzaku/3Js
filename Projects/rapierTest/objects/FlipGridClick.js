@@ -88,7 +88,11 @@ flipgroup
                 vec.x = c.position.x - intersect[0].point.x -13
                 vec.y = c.position.z - intersect[0].point.z
                 x = vec.length()
-
+                // axis.x = vec.y
+                // axis.z = vec.x
+                // axis.normalize()
+                // axis = new THREE.Vector3(vec.x, 0, vec.y).normalize()
+                console.log(axis)
                 q.setFromAxisAngle(axis, Math.PI * m);
                 // c.quaternion.copy(q)
                 gsap.to(c.quaternion, {
