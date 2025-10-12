@@ -1,245 +1,151 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pong Game</title>
+    <title>three.js webgl - map controls</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="main.css">
     <style>
-        canvas {
-            border: 2px solid white;
-            display: block;
-            margin: 0 auto;
-            background: black;
+        body {
+            background-color: #ccc;
+            color: #000;
         }
-        #scores {
-            text-align: center;
-            font-family: Arial, sans-serif;
-            font-size: 32px;
-            color: white;
-            padding: 20px;
-            background: black;
-        }
-        #difficulty {
-            text-align: center;
-            margin: 10px;
-        }
-        .difficulty-btn {
-            padding: 8px 16px;
-            margin: 0 5px;
-            cursor: pointer;
-        }
-        .active {
-            background: #4CAF50;
-            color: white;
-            border: none;
+
+        a {
+            color: #f00;
         }
     </style>
 </head>
+
 <body>
-    <div id="scores">
-        Player: <span id="playerScore">0</span> 
-        AI: <span id="aiScore">0</span>
+    <div id="info">
+        <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - map controls
     </div>
-    <div id="difficulty">
-        <button class="difficulty-btn active" onclick="setDifficulty('easy')">Easy</button>
-        <button class="difficulty-btn" onclick="setDifficulty('medium')">Medium</button>
-        <button class="difficulty-btn" onclick="setDifficulty('hard')">Hard</button>
-    </div>
-    <canvas id="pongCanvas" width="800" height="400"></canvas>
 
-    <script>
-        const canvas = document.getElementById('pongCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        // Difficulty settings
-        const difficultySettings = {
-            easy: {
-                speed: 3,
-                reactionDelay: 50,
-                predictionError: 70
-            },
-            medium: {
-                speed: 5,
-                reactionDelay: 30,
-                predictionError: 40
-            },
-            hard: {
-                speed: 7,
-                reactionDelay: 10,
-                predictionError: 10
+    <script type="importmap">
+                        {
+                                "imports": {
+                                        "three": "../build/three.module.js",
+                                        "three/addons/": "./jsm/"
+                                }
+                        }
+                </script>
+
+    <script type="module">
+
+        import * as THREE from 'three';
+
+        import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+
+        import { MapControls } from 'three/addons/controls/MapControls.js';
+
+        let camera, controls, scene, renderer;
+
+        init();
+        //render(); // remove when using animation loop
+
+        function init() {
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xcccccc);
+            scene.fog = new THREE.FogExp2(0xcccccc, 0.002);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setAnimationLoop(animate);
+            document.body.appendChild(renderer.domElement);
+
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.set(0, 200, - 400);
+
+            // controls
+
+            controls = new MapControls(camera, renderer.domElement);
+
+            //controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
+
+            controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+            controls.dampingFactor = 0.05;
+
+            controls.screenSpacePanning = false;
+
+            controls.minDistance = 100;
+            controls.maxDistance = 500;
+
+            controls.maxPolarAngle = Math.PI / 2;
+
+            // world
+
+            const geometry = new THREE.BoxGeometry();
+            geometry.translate(0, 0.5, 0);
+            const material = new THREE.MeshPhongMaterial({ color: 0xeeeeee, flatShading: true });
+
+            for (let i = 0; i < 500; i++) {
+
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.position.x = Math.random() * 1600 - 800;
+                mesh.position.y = 0;
+                mesh.position.z = Math.random() * 1600 - 800;
+                mesh.scale.x = 20;
+                mesh.scale.y = Math.random() * 80 + 10;
+                mesh.scale.z = 20;
+                mesh.updateMatrix();
+                mesh.matrixAutoUpdate = false;
+                scene.add(mesh);
+
             }
-        };
 
-        let currentDifficulty = 'easy';
+            // lights
 
-        function setDifficulty(difficulty) {
-            currentDifficulty = difficulty;
-            paddle.ai.speed = difficultySettings[difficulty].speed;
-            
-            // Update button styles
-            document.querySelectorAll('.difficulty-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
+            const dirLight1 = new THREE.DirectionalLight(0xffffff, 3);
+            dirLight1.position.set(1, 1, 1);
+            scene.add(dirLight1);
+
+            const dirLight2 = new THREE.DirectionalLight(0x002288, 3);
+            dirLight2.position.set(- 1, - 1, - 1);
+            scene.add(dirLight2);
+
+            const ambientLight = new THREE.AmbientLight(0x555555);
+            scene.add(ambientLight);
+
+            //
+
+            window.addEventListener('resize', onWindowResize);
+
+
+            const gui = new GUI();
+            gui.add(controls, 'zoomToCursor');
+            gui.add(controls, 'screenSpacePanning');
+
         }
 
-        // Game objects
-        const ball = {
-            x: canvas.width / 2,
-            y: canvas.height / 2,
-            radius: 10,
-            speed: 7,
-            dx: 5,
-            dy: 5
-        };
+        function onWindowResize() {
 
-        const paddle = {
-            width: 10,
-            height: 100,
-            player: {
-                y: canvas.height / 2 - 50,
-                speed: 8,
-                score: 0
-            },
-            ai: {
-                y: canvas.height / 2 - 50,
-                speed: difficultySettings.easy.speed,
-                score: 0
-            }
-        };
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
 
-        // Key states
-        const keys = {
-            ArrowUp: false,
-            ArrowDown: false
-        };
+            renderer.setSize(window.innerWidth, window.innerHeight);
 
-        // Event listeners
-        document.addEventListener('keydown', (e) => {
-            if (e.key in keys) {
-                keys[e.key] = true;
-            }
-        });
-
-        document.addEventListener('keyup', (e) => {
-            if (e.key in keys) {
-                keys[e.key] = false;
-            }
-        });
-
-        function predictBallPosition() {
-            // Simple ball position prediction with intentional error based on difficulty
-            let prediction = ball.y;
-            if (ball.dx > 0) {
-                const timeToReach = (canvas.width - ball.x) / ball.dx;
-                prediction = ball.y + ball.dy * timeToReach;
-                
-                // Add prediction error based on difficulty
-                const error = difficultySettings[currentDifficulty].predictionError;
-                prediction += (Math.random() - 0.5) * error;
-            }
-            return prediction;
         }
 
-        function updatePaddles() {
-            // Player paddle movement
-            if (keys.ArrowUp && paddle.player.y > 0) {
-                paddle.player.y -= paddle.player.speed;
-            }
-            if (keys.ArrowDown && paddle.player.y < canvas.height - paddle.height) {
-                paddle.player.y += paddle.player.speed;
-            }
+        function animate() {
 
-            // AI paddle movement with difficulty-based prediction
-            const predictedY = predictBallPosition();
-            const aiCenter = paddle.ai.y + paddle.height / 2;
-            
-            // Add reaction delay based on difficulty
-            if (Math.abs(aiCenter - predictedY) > difficultySettings[currentDifficulty].reactionDelay) {
-                if (aiCenter < predictedY && paddle.ai.y < canvas.height - paddle.height) {
-                    paddle.ai.y += paddle.ai.speed;
-                }
-                if (aiCenter > predictedY && paddle.ai.y > 0) {
-                    paddle.ai.y -= paddle.ai.speed;
-                }
-            }
+            controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
+
+            render();
+
         }
 
-        function updateBall() {
-            ball.x += ball.dx;
-            ball.y += ball.dy;
+        function render() {
 
-            // Wall collision (top/bottom)
-            if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
-                ball.dy *= -1;
-            }
+            renderer.render(scene, camera);
 
-            // Paddle collision
-            if (ball.dx < 0) {
-                if (ball.x - ball.radius < 20 &&
-                    ball.y > paddle.player.y &&
-                    ball.y < paddle.player.y + paddle.height) {
-                    ball.dx *= -1;
-                    const diff = ball.y - (paddle.player.y + paddle.height / 2);
-                    ball.dy = diff * 0.2;
-                }
-            } else {
-                if (ball.x + ball.radius > canvas.width - 20 &&
-                    ball.y > paddle.ai.y &&
-                    ball.y < paddle.ai.y + paddle.height) {
-                    ball.dx *= -1;
-                    const diff = ball.y - (paddle.ai.y + paddle.height / 2);
-                    ball.dy = diff * 0.2;
-                }
-            }
-
-            // Scoring
-            if (ball.x < 0) {
-                paddle.ai.score++;
-                document.getElementById('aiScore').textContent = paddle.ai.score;
-                resetBall();
-            } else if (ball.x > canvas.width) {
-                paddle.player.score++;
-                document.getElementById('playerScore').textContent = paddle.player.score;
-                resetBall();
-            }
         }
 
-        function resetBall() {
-            ball.x = canvas.width / 2;
-            ball.y = canvas.height / 2;
-            ball.dx = -ball.dx;
-            ball.dy = Math.random() * 10 - 5;
-        }
-
-        function draw() {
-            // Clear canvas
-            ctx.fillStyle = 'black';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Draw paddles
-            ctx.fillStyle = 'white';
-            ctx.fillRect(10, paddle.player.y, paddle.width, paddle.height);
-            ctx.fillRect(canvas.width - 20, paddle.ai.y, paddle.width, paddle.height);
-
-            // Draw ball
-            ctx.beginPath();
-            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-            ctx.fillStyle = 'white';
-            ctx.fill();
-            ctx.closePath();
-        }
-
-        function gameLoop() {
-            updatePaddles();
-            updateBall();
-            draw();
-            requestAnimationFrame(gameLoop);
-        }
-
-        gameLoop();
     </script>
-</body>
-</html>
 
+</body>
+
+</html>

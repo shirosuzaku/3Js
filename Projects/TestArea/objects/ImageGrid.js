@@ -13,22 +13,23 @@ export function ImageGrid(mainScene = new THREE.Scene()){
     let componets = []
     const planes = new THREE.Group()
     
-    loader.load('img5.jpg', (texture) => {
+    loader.load('img2.jpg', (texture) => {
         let size = 5
         const aspect = texture.image.width / texture.image.height;
 
         let grid = [
-            ['a','a','b','c'],
-            ['a','a','d','e'],
+            ['1','1','b','c'],
+            ['1','1','d','e'],
             ['f','g','h','h'],
             ['i','j','h','h'],
         ]
-        // grid = [
-        //         ['a','e','b','c'],
-        //         ['d','r','r','r'],
-        //         ['f','r','r','r'],
-        //         ['i','r','r','r'],
-        // ]
+        grid = [
+                ['a','e','b','c','z'],
+                ['d','r','r','r','w'],
+                ['f','r','r','r','x'],
+                ['i','r','r','r','y'],
+                ['l','p','o','h','g'],
+        ]
         grid.reverse()
 
 
@@ -95,13 +96,14 @@ export function ImageGrid(mainScene = new THREE.Scene()){
 
         mainScene.add(planes,g)
 
-        // planes.children.forEach((c,i)=>{
-        //     let tl = gsap.timeline({repeat: -1,yoyo: true})
-        //     tl.to(c.rotation,{
-        //         y: Math.PI,
-        //         duration: 1,
-        //     })
-        // })
+        planes.children.forEach((c,i)=>{
+            let tl = gsap.timeline({repeat: -1,yoyo: true})
+            tl.to(c.rotation,{
+                y: Math.PI,
+                delay: 0.05 * i,
+                duration: 1 - (0.05 * i),
+            })
+        })
     })
     const update = () => {
     }

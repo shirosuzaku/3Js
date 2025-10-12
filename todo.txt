@@ -1,0 +1,2 @@
+- zoom to cursor effect apparently thats possible
+-

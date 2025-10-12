@@ -19,6 +19,8 @@ import { ImageGrid } from './objects/ImageGrid';
 import { Bounce } from './objects/Bounce';
 import { Band } from './objects/Band';
 import { transition } from './objects/transitions';
+import { TestScene } from './objects/TestScene';
+import { WorldGrid } from './objects/WorldGrid';
 
 const doubleLarp = (OldMin, OldMax, NewMin, NewMax, OldValue) => {
   let OldRange = (OldMax - OldMin)
@@ -27,6 +29,10 @@ const doubleLarp = (OldMin, OldMax, NewMin, NewMax, OldValue) => {
   return NewValue
 }
 
+window.scrollTo(0,0)
+// const fixedHeight = window.innerHeight
+// document.documentElement.style.setProperty('--vh', `${fixedHeight * 0.01}px`)
+// document.body.style.height = `${fixedHeight}px`
 // --- Imports
 const mainCanvas = document.getElementById('bg')
 
@@ -35,14 +41,16 @@ const mainCanvas = document.getElementById('bg')
 // --- main setup
 const mainScene = new THREE.Scene()
 // 0xe15151c
-let campos = new Vector3(-2, 3, 4)
+let campos = new Vector3(1, 10, 1)
 let tarpos = new Vector3(0,0,0)
-let {renderer,mainCamera,mainControls} = Setup(mainCanvas,0x555555,campos,tarpos)//reder canvas ,bg color, camera position,control target
+let {renderer,mainCamera,mainControls} = Setup(mainCanvas,0xe7eae5,campos,tarpos)//reder canvas ,bg color, camera position,control target
 
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.0;
-renderer.localClippingEnabled = true;
+// renderer.outputColorSpace = THREE.SRGBColorSpace;
+// renderer.toneMapping = THREE.ACESFilmicToneMapping;
+// renderer.toneMappingExposure = 1.0;
+// renderer.localClippingEnabled = true;
+
+
 
 const composer = new EffectComposer(renderer)
 const renderPass = new RenderPass(mainScene, mainCamera)
@@ -108,13 +116,23 @@ let ig = ImageGrid(mainScene)
 
 
 // Helpers
-Testing(mainScene)
+// Testing(mainScene)
+
+// let box = TestScene(mainScene,mainCamera,mainControls)
+// let grid = WorldGrid(mainScene,mainCamera)
+
+
+// fadded gird with world cordinates with custome shader 
+// make the scroll snap snap from close its doing it from far
 
 // Animation loop
 function Animate() {
   window.requestAnimationFrame(Animate)
 
   mainControls.update()
+  // mainControls.target.lerp(new THREE.Vector3(box.position.x,box.position.y,box.position.z),0.05)
+  // mainCamera.position.lerp(new THREE.Vector3(box.position.x + 5,box.position.y + 5,box.position.z + 5),0.05)
+  // console.log(mainControls.target)
   // p.update()
   // if(ig){
   //   ig.update()
@@ -135,9 +153,9 @@ let size = {
 }
 
 const onResize = () => {
-
+  let larger = window.innerHeight > size.height ? window.innerHeight : size.height
   size.width = window.innerWidth
-  size.height = window.innerHeight
+  size.height = larger
 
   mainCamera.aspect = size.width / size.height
   mainCamera.updateProjectionMatrix()

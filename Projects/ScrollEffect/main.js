@@ -55,7 +55,7 @@ composer.addPass(renderPass)
 
 // LightTest(mainScene)
 // ScrollWall(mainScene)
-// TextureTest(mainScene)
+TextureTest(mainScene)
 
 
 // Animation loop

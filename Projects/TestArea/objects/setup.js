@@ -28,6 +28,9 @@ export function Setup(targetCanvas, sceneColor, cameraPosition, target) {
     mainControls.target.copy(target);
     mainControls.enableDamping = true;
     mainControls.dampingFactor = 0.05;
+    mainControls.screenSpacePanning  = false;
+    mainControls.minPolarAngle = Math.PI * 0.2
+    mainControls.maxPolarAngle = Math.PI * 0.4
     mainControls.update(); // Force initial update
 
     return { renderer, mainCamera, mainControls };
