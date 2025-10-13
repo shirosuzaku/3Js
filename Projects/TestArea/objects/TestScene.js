@@ -44,7 +44,7 @@ export function TestScene(mainScene = THREE.Scene,mainCamera = THREE.Perspective
                 start: "top top",
                 end: "bottom bottom",
                 scrub: true,
-                markers: true,
+                // markers: true,
             },
         });
         let cameraPositions = [

@@ -32,10 +32,10 @@ export function Bounce(mainScene){
     box3.position.y = 0.6
     box3.position.x = 1
     box3.position.z = 1.6
-    box3.translateY(1)
+    box3.translateY(3)
     
     box1.position.y = 0.6
-    box1.translateY(0.5)
+    box1.translateY(2.5)
 
     const tl = gsap.timeline({scrollTrigger: {
         trigger: ".htmltimeline",

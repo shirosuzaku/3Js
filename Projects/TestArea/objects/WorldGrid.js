@@ -1,118 +1,87 @@
 import * as THREE from "three";
+import gsap from 'gsap';
+import { GUI } from 'dat.gui';
 
-export function WorldGrid(mainScene, mainCamera) {
-    const detecterPlane = new THREE.Mesh(
-        new THREE.PlaneGeometry(400, 400),
-        new THREE.MeshBasicMaterial({ color: 0xbbbbbb })
-    )
-    const detectorGroup = new THREE.Group()
-    detectorGroup.add(detecterPlane)
-    detecterPlane.rotateX(Math.PI * -0.5)
-
-    const grid = new THREE.GridHelper(10, 10)
-
-    grid.position.y = 0.001
-
-    const mat = new THREE.MeshBasicMaterial({color: 0x333333})
-    let mat2 = new THREE.ShaderMaterial({
+export function WorldGrid(mainScene,mainControls) {
+    
+  let mat = new THREE.ShaderMaterial({
         uniforms: {
-            u_color: { value : new THREE.Color(0x00ffff)},
-            u_background: {value: new THREE.Color(0x000000)},
-            u_scale: {value: 10.0}
+            u_color: { value : new THREE.Color(0x4e1c42)},
+            u_background: {value: new THREE.Color(0x9b9b9b)},
+            u_target: {value: new THREE.Vector3(0,0,0)},
+            u_scale: {value: 0.05},
+            U_size: {value: 0.2},
         },
         vertexShader: `
             varying vec2 vUv;
+            varying vec3 vWorldPos;
             void main() {
-                vUv = uv;
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+              vUv = uv;
+              vec4 worldPos = modelMatrix * vec4(position, 1.0);
+              vWorldPos = worldPos.xyz;
+              gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
             }
         `,
         fragmentShader: `
             uniform vec3 u_color;
             uniform vec3 u_background;
             uniform float u_scale;
+            uniform float u_size;
             varying vec2 vUv;
+            varying vec3 vWorldPos;
+            uniform vec3 u_target;
 
             void main() {
-            vec2 grid = abs(fract(vUv * u_scale - 0.5) - 0.5) / fwidth(vUv * u_scale);
-            float line = min(grid.x, grid.y);
-            float gridMask = 1.0 - min(line, 1.0);
-            vec3 color = mix(u_background, u_color, gridMask);
-            gl_FragColor = vec4(color, 1.0);
+              float dist = length(vWorldPos - u_target);
+              float g = 1.0 - smoothstep(5.0,10.0,dist);
+
+              // working grid
+              float size = u_scale * 0.5;
+              float edge = 0.05;
+
+              float fx = fract(vWorldPos.x);
+              float fz = fract(vWorldPos.z);
+
+              // Smooth fade near edges (instead of hard cuts)
+              float solidx = 1.0 - smoothstep(size - edge, size + edge, fx);
+              solidx += smoothstep(1.0 - size - edge, 1.0 - size + edge, fx);
+
+              float solidz = 1.0 - smoothstep(size - edge, size + edge, fz);
+              solidz += smoothstep(1.0 - size - edge, 1.0 - size + edge, fz);
+
+              float solid = (solidx + solidz > 0.0) ? ((0.2 * g) + 0.2) : 0.2;
+
+              vec3 clrMix = (solidx + solidz > 0.0) ? mix(u_color,u_background,1.0-g)  : u_background;
+
+              float final = solid * g;
+
+              gl_FragColor = vec4(vec3(clrMix),1.0);
+              // gl_FragColor = vec4(vec3(solid),1.0);
             }
         `
     })
 
-    const gridShader = new THREE.ShaderMaterial({
-        uniforms: {
-          u_color: { value: new THREE.Color(0x00ffff) },
-          u_background: { value: new THREE.Color(0x000000) },
-          u_scale: { value: 10.0 }
-        },
-        vertexShader: `
-          varying vec2 vUv;
-          void main() {
-            vUv = uv;
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-          }
-        `,
-        fragmentShader: `
-          #extension GL_OES_standard_derivatives : enable
-          precision mediump float;
-      
-          uniform vec3 u_color;
-          uniform vec3 u_background;
-          uniform float u_scale;
-          varying vec2 vUv;
-      
-          void main() {
-            vec2 scaledUV = vUv * u_scale;
-            vec2 grid = abs(fract(scaledUV) - 0.5);
-            float line = min(grid.x, grid.y);
-      
-            float thickness = fwidth(line);
-            float mask = 1.0 - smoothstep(0.0, thickness, line);
-      
-            vec3 color = mix(u_background, u_color, mask);
-            gl_FragColor = vec4(color, 1.0);
-          }
-        `
-      });
-    const wgrid = new THREE.Mesh(
-        new THREE.PlaneGeometry(400,400),
-        gridShader
+    const params = {
+      color1: [255, 255, 255], // 78 28 66
+      color2: [0, 0, 0], // 155 155 155
+    };
+
+    const gui = new GUI();
+
+    gui.addColor(params, 'color1').onChange((val) => {mat.uniforms.u_color.value.setRGB(val[0] / 255, val[1] / 255, val[2] / 255);});
+    gui.addColor(params, 'color2').onChange((val) => {mat.uniforms.u_background.value.setRGB(val[0] / 255, val[1] / 255, val[2] / 255);});
+
+    const wGrid = new THREE.Mesh(
+        new THREE.PlaneGeometry(200,200),
+        mat
     )
-    wgrid.rotateX(Math.PI * -0.5)
-
-
-
-    const pointer = new THREE.Vector2();
-    const raycaster = new THREE.Raycaster();
-
-    const onMouseMove = e => {
-        pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
-        pointer.y = ((e.clientY / window.innerHeight) * 2 - 1) * -1;
-
-        raycaster.setFromCamera(pointer, mainCamera);
-
-        const intersect = raycaster.intersectObjects(detectorGroup.children, true)
-
-        if (intersect.length != 0) {
-            console.log(intersect[0])
-        }
-    }
-
-    window.addEventListener('mousemove', onMouseMove);
-
+    wGrid.rotateX(Math.PI * -0.5)
+    wGrid.position.y = 1
 
     const update = () => {
-
+      mat.uniforms.u_target.value.lerp(new THREE.Vector3(mainControls.target.x,0,mainControls.target.z),1.0);
     }
 
-    mainScene.add(
-        detectorGroup,
-        // grid,
-        wgrid
-    )
-    return update
+    mainScene.add(wGrid)
+    return {update: update}
 }
