@@ -7,7 +7,9 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
 import { GUI } from 'dat.gui'
 import gsap from 'gsap'
 import { Setup } from './objects/setup';
-import { Base } from './objects/Sections/Base';
+// import { Base } from './objects/Sections/Base';
+import { Lighting } from './objects/Lighting';
+import { Base } from './objects/Sections/BaseClass';
 
 // --- Imports
 const mainCanvas = document.getElementById('bg')
@@ -20,7 +22,7 @@ const mainScene = new THREE.Scene()
 // 0xe7eae5
 let campos = new THREE.Vector3(1, 10, 1)
 let tarpos = new THREE.Vector3(0,0,0)
-let {renderer,mainCamera,mainControls} = Setup(mainCanvas,0x555555,campos,tarpos)//reder canvas ,bg color, camera position,control target
+let {renderer,mainCamera,mainControls} = Setup(mainCanvas,0x9b9b9b,campos,tarpos)//reder canvas ,bg color, camera position,control target
 
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -33,17 +35,26 @@ const composer = new EffectComposer(renderer)
 const renderPass = new RenderPass(mainScene, mainCamera)
 composer.addPass(renderPass)
 
-const sectionBase = Base(mainScene,mainCamera,mainControls)
 
-// Animation loop
-function Animate() {
-  window.requestAnimationFrame(Animate)
+const init = async () => {
+  // const sectionBase = await Base(mainScene,mainCamera,mainControls)
+  const sectionBase = new Base(mainScene,mainCamera,mainControls)
+  // console.log("base update",sectionBase.update)
+  Lighting(mainScene,renderer)
 
-  mainControls.update()
+  
+    // Animation loop
+  function Animate() {
+    window.requestAnimationFrame(Animate)
+      
+    mainControls.update()
+    sectionBase.update()
 
-  composer.render()
+    composer.render()
+  }
+  Animate()
 }
-Animate()
+init()
 
 // On Resize 
 let size = {

@@ -35,12 +35,16 @@ body{
   pointer-events: all;
 }
 section{
-  height: 200vh;
+  height: 400vh;
   width: 10vw;
   /* background-color: black; */
-  background-color: rgba(240, 248, 255, 0.4);
+  /* background-color: rgba(240, 248, 255, 0.1); */
+  background-image: linear-gradient(rgba(255, 255, 255, 0.1)45% ,rgba(0, 0, 0, 0.1)55% );
   /* scroll-snap-align: start;
   scroll-snap-stop: always; */
+}
+section:nth-child(even){
+  background-image: linear-gradient(rgba(255, 0, 255, 0.1)45% ,rgba(0, 255, 0, 0.1)55% );
 }
 
 .dg.ac{
